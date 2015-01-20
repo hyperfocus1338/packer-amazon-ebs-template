@@ -1,0 +1,71 @@
+{
+  "variables": {
+    "atlas_artifact_name": "{{env `atlas_artifact_name`}}",
+    "atlas_token": "{{env `atlas_token`}}",
+    "aws_access_key": "{{env `aws_access_key`}}",
+    "aws_secret_key": "{{env `aws_secret_key`}}",
+    "ansible_playbook_location": "{{env `ansible_playbook_location`}}"
+  },
+
+  "push": {
+    "name": "hyperfocus/utopic",
+    "token": "{{user 'atlas_token'}}"
+  },
+
+  "builders": [{
+    "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "ami_name": "version_{{timestamp}}",
+      "ami_description": "built_with_packer",
+      "source_ami": "ami-4ed7a926",
+      "region": "us-east-1",
+      "associate_public_ip_address": "false",
+      "instance_type": "t2.micro",
+      "enhanced_networking": "false",
+      "security_group_id": "sg-98b47bfd",
+      "ssh_username": "ubuntu",
+      "ssh_port": "22",
+      "ssh_timeout": "10m",
+      "tags": {
+        "OS_Version": "Ubuntu",
+        "Release": "14-10-x64"
+      },
+      "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "virtual_name": "EBS-1",
+        "snapshot_id": "snap-4a3734c1"
+      }
+    ]
+  }],
+
+  "provisioners": [{
+    "type": "file",
+      "source": "provision/release-upgrades",
+      "destination": "/tmp/release-upgrades"
+    },
+
+    {
+    "type": "file",
+      "source": "{{user `ansible_playbook_location`}}",
+      "destination": "/tmp"
+    },
+
+    {
+    "type": "shell",
+      "scripts": [
+      "provision/dist-upgrade.sh",
+      "provision/ansible.sh"
+    ]}
+  ],
+
+  "post-processors": [{
+    "type": "atlas",
+      "artifact": "{{user `atlas_artifact_name`}}",
+      "artifact_type": "aws.ami",
+      "metadata": {
+        "created_at": "{{timestamp}}"
+      }
+  }]
+}

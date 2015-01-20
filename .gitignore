@@ -8,4 +8,4 @@ Thumbs.db
 *.box
 *.iso
 aws-auth.json
-DOCUMENT_ROOT/provision/*
+provision
