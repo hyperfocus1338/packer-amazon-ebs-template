@@ -4,7 +4,8 @@
     "atlas_token": "{{env `atlas_token`}}",
     "aws_access_key": "{{env `aws_access_key`}}",
     "aws_secret_key": "{{env `aws_secret_key`}}",
-    "ansible_playbook_location": "{{env `ansible_playbook_location`}}"
+    "ansible_playbook_location": "{{env `ansible_playbook_location`}}",
+    "private_key_file": "{{env `private_key_file`}}"
   },
 
   "push": {
@@ -18,7 +19,7 @@
       "secret_key": "{{user `aws_secret_key`}}",
       "ami_name": "version_{{timestamp}}",
       "ami_description": "built_with_packer",
-      "source_ami": "ami-4ed7a926",
+      "source_ami": "ami-ca2850a2",
       "region": "us-east-1",
       "associate_public_ip_address": "false",
       "instance_type": "t2.micro",
@@ -27,6 +28,8 @@
       "ssh_username": "ubuntu",
       "ssh_port": "22",
       "ssh_timeout": "10m",
+      "ssh_private_key_file": "{{user `private_key_file`}}",
+      "ssh_private_ip": "false",
       "tags": {
         "OS_Version": "Ubuntu",
         "Release": "14-10-x64"
@@ -35,7 +38,7 @@
       {
         "device_name": "/dev/sda1",
         "virtual_name": "EBS-1",
-        "snapshot_id": "snap-4a3734c1"
+        "snapshot_id": "snap-1b5ca191"
       }
     ]
   }],
